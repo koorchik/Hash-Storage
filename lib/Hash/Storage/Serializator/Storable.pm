@@ -5,6 +5,8 @@ use warnings;
 use Carp qw/croak/;
 use Storable qw/nfreeze thaw/;
 
+use base 'Hash::Storage::Serializator::Base';
+
 sub serialize {
     my ($self, $data_structure) = @_;
     croak "You must pass a reference to data" unless ref $data_structure;

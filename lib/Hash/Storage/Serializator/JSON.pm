@@ -1,9 +1,12 @@
 package Hash::Storage::Serializator::JSON;
 
+use v5.10;
 use strict;
 use warnings;
 use Carp qw/croak/;
 use JSON qw/to_json decode_json/;
+
+use base 'Hash::Storage::Serializator::Base';
 
 sub serialize {
     my ($self, $data) = @_;
@@ -17,6 +20,8 @@ sub unserialize {
     
     my $res = eval { decode_json( $serialized ) };
     die 'ERROR', "Cant unserialize string [$serialized]. ERROR=[$@]" if $@;
+    
+    return $res;
 }
 
 1;

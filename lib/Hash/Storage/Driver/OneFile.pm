@@ -1,74 +1,84 @@
-package Hash::Storage:::Driver::Base;
+package Hash::Storage::Driver::OneFile;
 
 use v5.10;
 use strict;
 use warnings;
-use Carp qw/croak/;
-
-our $VERSION = '0.01';
-
-sub new {
-    my ($class) = @_;
-    my %args = @_;
-    
-    # Check serializator    
-    my $ser = $args{serializator};
-    croak "Serializator required" unless $ser;
-    croak "Serializator required" unless $ser;
-    unless ( $ser->can('serialize')  && $ser->can('unserialize')) {
-        croak "Serializator must have [serialize] and [unserialize] methods";
-    }
-   
-    return bless \%args, $class; 
-}
+use File::Slurp;
+use Hash::Storage::Util qw/do_exclusively/;
+use List::Util qw/max/;
+use base "Hash::Storage::Driver::Base";
 
 sub init {
     my ($self) = @_;
-    my $class = ref $self || $self;
-    croak "Method [init] is not implemented in class [$class]";
+
 }
 
 sub add {
     my ($self, $fields) = @_;
-    my $class = ref $self || $self;
-    croak "Method [add] is not implemented in class [$class]";
+
+    my $id;
+    do_exclusively(sub {
+        my $hashes = $self->_load_data();
+        $id = max(keys(%$hashes)) + 1;
+        $hashes->{$id} = $fields;
+        $self->_save_data($hashes);
+    });
+    
+    return $id;
 }
 
 sub get {
     my ($self, $id) = @_;
-    my $class = ref $self || $self;
-    croak "Method [get] is not implemented in class [$class]";
+    my $hashes = $self->_load_data();
+    return $hashes->{$id}
 }
 
 sub set {
     my ($self, $id, $fields) = @_;
-    my $class = ref $self || $self;
-    croak "Method [set] is not implemented in class [$class]";
+    
+    do_exclusively(sub {
+        my $hashes = $self->_load_data();
+        @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
+        $self->_save_data($hashes);
+    });
 }
 
 sub del {
     my ($self, $id) = @_;
-    my $class = ref $self || $self;
-    croak "Method [del] is not implemented in class [$class]";    
+    
+    do_exclusively(sub {
+        my $hashes = $self->_load_data();
+        delete $hashes->{$id};
+        $self->_save_data($hashes);
+    });
 } 
 
 sub list {
     my ($self, $filter, $offset, $limit) = @_;
-    my $class = ref $self || $self;
-    croak "Method [list] is not implemented in class [$class]";    
+    my $hashes = $self->_load_data();
 }
 
-sub find {
-    my ($self, $filter) = @_;
-    my $class = ref $self || $self;
-    croak "Method [find] is not implemented in class [$class]";    
-}
 
 sub count {
     my ($self, $filter) = @_;
-    my $class = ref $self || $self;
-    croak "Method [count] is not implemented in class [$class]";    
+    
 }
+
+sub _load_data {
+    my $self = shift;
+    return {} unless -e $self->{file};
+    my $serialized = read_file( $self->{file} );
+    my $data = $self->{serializator}->unserialize($serialized);
+    
+    return $data;
+}
+
+sub _save_data {
+    my ($self, $data) = @_;
+    my $serialized = $self->{serializator}->serialize($data);
+    write_file( $self->{file}, {atomic => 1}, $serialized );
+}
+
 
 =head1 NAME
 

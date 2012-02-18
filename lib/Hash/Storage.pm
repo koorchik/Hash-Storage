@@ -8,43 +8,49 @@ our $VERSION = '0.01';
 
 
 sub new {
-    my ($class, $schema) = @_;
+    my $class = shift;
+    my %args = @_;
+
+    my $self = bless \%args, $class;
+    $self->init();
+    return $self;
 }
 
 sub init {
-    my ($self) = @_;
+    my $self = shift;
+    $self->{driver}->init(@_);
 }
 
 sub add {
     my ($self, $fields) = @_;
-    
+    $self->{driver}->add($fields);
 }
 
 sub get {
     my ($self, $id) = @_;
+    $self->{driver}->get($id);
 }
 
 sub set {
     my ($self, $id, $fields) = @_;
-    
+    $self->{driver}->set($id, $fields);
 }
 
 sub del {
     my ($self, $id) = @_;
+    $self->{driver}->del($id);
 } 
 
 
 sub list {
-    my ($self, $filter, $offset, $limit) = @_;
+    my ($self, $filter, $order, $offset, $limit) = @_;
+    $self->{driver}->list($filter, $order, $offset, $limit);
 }
 
-sub find {
-    my ($self, $filter) = @_;
-}
 
 sub count {
     my ($self, $filter) = @_;
-    
+    $self->{driver}->count($filter);
 }
 
 
