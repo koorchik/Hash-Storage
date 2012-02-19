@@ -6,20 +6,29 @@ use warnings;
 use Carp qw/croak/;
 
 our $VERSION = '0.01';
-
+use DDP;
 sub new {
     my $class = shift;
-    my %args = @_;
-    
-    # Check serializator    
-    my $ser = $args{serializator};
-    croak "Serializator required" unless $ser;
-    croak "Serializator required" unless $ser;
-    unless ( $ser->can('serialize')  && $ser->can('unserialize')) {
-        croak "Serializator must have [serialize] and [unserialize] methods";
+    my %args  = @_;
+ 
+    my $serializer = $args{serializer};
+    croak "Wrong serializer" unless $serializer;
+
+    my $self = bless \%args, $class;
+
+    if (! ref $serializer  ) {
+        my $serializer_class = 'Hash::Storage::Serializer::' . $serializer;
+
+        eval "require $serializer_class";
+        croak "Cannot load [$serializer_class] $@" if $@;
+
+        $self->{serializer} = $serializer_class->new();
+    } elsif ( $serializer->can('serialize') && $serializer->can('unserialize') ) {
+        $self->{serializer} = $serializer;
+    } else {
+        croak "Wrong serializer [$serializer]";
     }
-   
-    return bless \%args, $class; 
+    return $self;
 }
 
 sub init {
@@ -28,40 +37,34 @@ sub init {
     croak "Method [init] is not implemented in class [$class]";
 }
 
-sub add {
-    my ($self, $fields) = @_;
-    my $class = ref $self || $self;
-    croak "Method [add] is not implemented in class [$class]";
-}
-
 sub get {
-    my ($self, $id) = @_;
+    my ( $self, $id ) = @_;
     my $class = ref $self || $self;
     croak "Method [get] is not implemented in class [$class]";
 }
 
 sub set {
-    my ($self, $id, $fields) = @_;
+    my ( $self, $id, $fields ) = @_;
     my $class = ref $self || $self;
     croak "Method [set] is not implemented in class [$class]";
 }
 
 sub del {
-    my ($self, $id) = @_;
+    my ( $self, $id ) = @_;
     my $class = ref $self || $self;
-    croak "Method [del] is not implemented in class [$class]";    
-} 
+    croak "Method [del] is not implemented in class [$class]";
+}
 
 sub list {
-    my ($self, $filter, $offset, $limit) = @_;
+    my ( $self, $filter, $offset, $limit ) = @_;
     my $class = ref $self || $self;
-    croak "Method [list] is not implemented in class [$class]";    
+    croak "Method [list] is not implemented in class [$class]";
 }
 
 sub count {
-    my ($self, $filter) = @_;
+    my ( $self, $filter ) = @_;
     my $class = ref $self || $self;
-    croak "Method [count] is not implemented in class [$class]";    
+    croak "Method [count] is not implemented in class [$class]";
 }
 
 =head1 NAME
@@ -129,4 +132,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Hash::Storage
+1;    # End of Hash::Storage

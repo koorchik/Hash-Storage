@@ -3,16 +3,33 @@ package Hash::Storage;
 use v5.10;
 use strict;
 use warnings;
+use Carp qw/croak/;
 
 our $VERSION = '0.01';
 
-
 sub new {
-    my $class = shift;
-    my %args = @_;
+    my $class  = shift;
+    my %args   = @_;
+    my $driver = $args{driver};
+    croak "Wrong driver" unless ref $driver;
 
-    my $self = bless \%args, $class;
+    my $self = bless {}, $class;
+
+    if ( ref $driver eq 'ARRAY' ) {
+        my $driver_class = 'Hash::Storage::Driver::' . $driver->[0];
+
+        eval "require $driver_class";
+        croak "Cannot load [$driver_class] $@" if $@;
+
+        $self->{driver} = $driver_class->new( %{ $driver->[1] || {} } );
+    } elsif ( $driver->isa('Hash::Storage::Driver::Base') ) {
+        $self->{driver} = $driver;
+    } else {
+        croak "Wrong driver [$driver]";
+    }
+
     $self->init();
+
     return $self;
 }
 
@@ -21,38 +38,36 @@ sub init {
     $self->{driver}->init(@_);
 }
 
-sub add {
-    my ($self, $fields) = @_;
-    $self->{driver}->add($fields);
-}
-
 sub get {
-    my ($self, $id) = @_;
+    my ( $self, $id ) = @_;
+    croak "id is required" unless $id;
     $self->{driver}->get($id);
 }
 
 sub set {
-    my ($self, $id, $fields) = @_;
-    $self->{driver}->set($id, $fields);
+    my ( $self, $id, $fields ) = @_;
+    croak "id is required" unless $id;
+    croak "fields are required" unless ref $fields eq 'HASH';
+    
+    $self->{driver}->set( $id, $fields );
 }
 
 sub del {
-    my ($self, $id) = @_;
+    my ( $self, $id ) = @_;
+    croak "id is required" unless $id;
+    
     $self->{driver}->del($id);
-} 
-
+}
 
 sub list {
-    my ($self, $filter, $order, $offset, $limit) = @_;
-    $self->{driver}->list($filter, $order, $offset, $limit);
+    my ( $self, $filter, $order, $offset, $limit ) = @_;
+    $self->{driver}->list( $filter, $order, $offset, $limit );
 }
-
 
 sub count {
-    my ($self, $filter) = @_;
+    my ( $self, $filter ) = @_;
     $self->{driver}->count($filter);
 }
-
 
 =head1 NAME
 
@@ -119,4 +134,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Hash::Storage
+1;    # End of Hash::Storage
