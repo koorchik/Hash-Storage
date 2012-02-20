@@ -71,10 +71,70 @@ sub count {
 
 =head1 NAME
 
-Hash::Storage - The great new Hash::Storage!
+Hash::Storage - Persistent Hash Storage Framework
 
 =cut
 
+=head1 SYNOPSIS
+
+    my $st = Hash::Storage->new( 
+        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ] 
+    );
+    
+    # Store hash by id
+    $st->set( 'user1' => { name => 'Viktor', gender => 'M', age => '28' } );
+    
+    # Get hash by id
+    my $user_data = $st->get('user1');
+    
+    # Delete hash by id
+    $st->del('user1');
+    
+
+=head1 DESCRIPTION
+
+Hash::Storage is a multipurpose storage for hash. You can consider Hash::Storage object as a collection of hashes. 
+You can use it for storing users, sessions and a lot more data.  
+
+Hash::Storage has pluggable architecture, therefore you can use different drivers or write you own.
+
+=head1 METHODS
+
+=head2 Hash::Storage->new(driver => $DRIVER)
+
+$DRIVER is an arrayref with two values:
+the first is a driver name, the second is a hashref with options for driver.
+    
+    my $st = Hash::Storage->new( 
+        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ] 
+    );
+
+$DRIVER - also can be a Hash::Storage driver object
+    
+    my $drv = Hash::Storage::Driver::OneFile->new({ serializer => 'JSON', file => '/tmp/t.json' });
+    my $st = Hash::Storage->new( driver => $drv );
+
+
+=head2 $SELF->set($ID, \%HASH);
+
+Saves hash
+
+=head2 $SELF->get($ID);
+
+Retrieves hash
+
+=head2 $SELF->del($ID);
+
+Deletes hash
+
+=head2 $SELF->list();
+
+returns array with hashrefs
+
+=head2 $SELF->count();
+
+returns number of hashes in a collection
+ 
 =head1 AUTHOR
 
 "koorchik", C<< <"koorchik at cpan.org"> >>
@@ -84,9 +144,6 @@ Hash::Storage - The great new Hash::Storage!
 Please report any bugs or feature requests to C<bug-hash-storage at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Hash-Storage>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 
