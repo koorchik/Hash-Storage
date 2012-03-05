@@ -16,7 +16,7 @@ sub serialize {
     croak "Method [serialize] is not implemented in class [$class]";
 }
 
-sub unserialize {
+sub deserialize {
     my ( $self, $serialized ) = @_;
     my $class = ref $self || $self;
     croak "Method [unserialize] is not implemented in class [$class]";

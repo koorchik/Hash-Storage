@@ -14,7 +14,7 @@ sub serialize {
     return to_json( $data, { utf8 => 1, canonical => 1 } );
 }
 
-sub unserialize {
+sub deserialize {
     my ( $self, $serialized ) = @_;
     croak "You must pass a serialized string" if !$serialized || ref($serialized);
 

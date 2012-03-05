@@ -55,7 +55,7 @@ sub _load_data {
     my $self = shift;
     return {} unless -e $self->{file};
     my $serialized = read_file( $self->{file} );
-    my $data       = $self->{serializer}->unserialize($serialized);
+    my $data       = $self->{serializer}->deserialize($serialized);
 
     return $data;
 }

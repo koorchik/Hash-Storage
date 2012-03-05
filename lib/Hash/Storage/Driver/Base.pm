@@ -23,7 +23,7 @@ sub new {
         croak "Cannot load [$serializer_class] $@" if $@;
 
         $self->{serializer} = $serializer_class->new();
-    } elsif ( $serializer->can('serialize') && $serializer->can('unserialize') ) {
+    } elsif ( $serializer->can('serialize') && $serializer->can('deserialize') ) {
         $self->{serializer} = $serializer;
     } else {
         croak "Wrong serializer [$serializer]";
