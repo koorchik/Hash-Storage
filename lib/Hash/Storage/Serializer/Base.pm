@@ -19,7 +19,7 @@ sub serialize {
 sub deserialize {
     my ( $self, $serialized ) = @_;
     my $class = ref $self || $self;
-    croak "Method [unserialize] is not implemented in class [$class]";
+    croak "Method [deserialize] is not implemented in class [$class]";
 }
 
 1;
