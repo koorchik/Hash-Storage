@@ -6,7 +6,7 @@ use warnings;
 use Carp qw/croak/;
 
 our $VERSION = '0.01';
-use DDP;
+
 sub new {
     my $class = shift;
     my %args  = @_;
