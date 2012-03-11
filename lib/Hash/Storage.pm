@@ -41,12 +41,15 @@ sub init {
 sub get {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
+    croak "id must contain only letters and digits" if $id =~ /\W/;
+    
     $self->{driver}->get($id);
 }
 
 sub set {
     my ( $self, $id, $fields ) = @_;
     croak "id is required" unless $id;
+    croak "id must contain only letters and digits" if $id =~ /\W/;
     croak "fields are required" unless ref $fields eq 'HASH';
     
     $self->{driver}->set( $id, $fields );
@@ -55,6 +58,7 @@ sub set {
 sub del {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
+    croak "id must contain only letters and digits" if $id =~ /\W/;
     
     $self->{driver}->del($id);
 }

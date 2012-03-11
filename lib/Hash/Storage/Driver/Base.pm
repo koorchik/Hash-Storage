@@ -4,6 +4,7 @@ use v5.10;
 use strict;
 use warnings;
 use Carp qw/croak/;
+use Data::Serializer::Raw;
 
 our $VERSION = '0.01';
 
@@ -17,12 +18,7 @@ sub new {
     my $self = bless \%args, $class;
 
     if (! ref $serializer  ) {
-        my $serializer_class = 'Hash::Storage::Serializer::' . $serializer;
-
-        eval "require $serializer_class";
-        croak "Cannot load [$serializer_class] $@" if $@;
-
-        $self->{serializer} = $serializer_class->new();
+        $self->{serializer} = Data::Serializer::Raw->new(serializer => $serializer);
     } elsif ( $serializer->can('serialize') && $serializer->can('deserialize') ) {
         $self->{serializer} = $serializer;
     } else {
