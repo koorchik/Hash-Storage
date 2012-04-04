@@ -2,7 +2,8 @@
 
 Hash::Storage - Persistent Hash Storage Framework
 
-=cut
+MODULE IS IN A DEVELOPMENT STAGE. DO NOT USE IT YET.
+
 
 =head1 SYNOPSIS
 
