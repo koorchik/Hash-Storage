@@ -38,6 +38,7 @@ sub del {
         $self->_save_data($hashes);
     } );
 }
+
 sub list {
     my ( $self, $filter, $offset, $limit ) = @_;
     my $hashes = $self->_load_data();

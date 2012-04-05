@@ -41,26 +41,26 @@ sub init {
 sub get {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
-    croak "id must contain only letters and digits" if $id =~ /\W/;
+    croak "id must contain only letters and digits" unless $self->_is_good_id($id);
     
-    $self->{driver}->get($id);
+    $self->{driver}->get(lc($id));
 }
 
 sub set {
     my ( $self, $id, $fields ) = @_;
     croak "id is required" unless $id;
-    croak "id must contain only letters and digits" if $id =~ /\W/;
+    croak "id must contain only letters and digits" unless $self->_is_good_id($id);
     croak "fields are required" unless ref $fields eq 'HASH';
     
-    $self->{driver}->set( $id, $fields );
+    $self->{driver}->set( lc($id), $fields );
 }
 
 sub del {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
-    croak "id must contain only letters and digits" if $id =~ /\W/;
+    croak "id must contain only letters and digits" unless $self->_is_good_id($id);
     
-    $self->{driver}->del($id);
+    $self->{driver}->del(lc($id));
 }
 
 sub list {
@@ -71,6 +71,11 @@ sub list {
 sub count {
     my ( $self, $filter ) = @_;
     $self->{driver}->count($filter);
+}
+
+sub _is_good_id {
+	my ($self, $id) = @_;
+	return $id =~ m/^[a-zA-Z0-9][a-zA-Z0-9_\@\-.]*[a-zA-Z0-9]$/ ? 1 : 0 ;
 }
 
 =head1 NAME
