@@ -58,7 +58,7 @@ sub list {
     
     opendir( my $dh , $dir ) or die "Cannot open dir [$dir]";
     while ( my $file = readdir($dh) ){
-        next if $file !~ /^\w+\.hst$/;
+        next if $file !~ /^[a-zA-Z0-9][a-zA-Z0-9_\@\-.]*[a-zA-Z0-9]\.hst$/;
         
         my $serialized = read_file("$dir/$file");
         push @hashes, $self->{serializer}->deserialize($serialized); 
