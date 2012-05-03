@@ -8,6 +8,7 @@ use Hash::Storage::Util qw/do_exclusively/;
 use List::Util qw/max/;
 use base "Hash::Storage::Driver::Base";
 use Carp qw/croak/;
+use Digest::MD5 qw/md5_hex/;
 
 sub new {
     my ($class, %args) = @_;
@@ -58,7 +59,7 @@ sub list {
     
     opendir( my $dh , $dir ) or die "Cannot open dir [$dir]";
     while ( my $file = readdir($dh) ){
-        next if $file !~ /^[a-zA-Z0-9][a-zA-Z0-9_\@\-.]*[a-zA-Z0-9]\.hst$/;
+        next if $file !~ /^[a-f0-9]+\.hst$/;
         
         my $serialized = read_file("$dir/$file");
         push @hashes, $self->{serializer}->deserialize($serialized); 
@@ -75,7 +76,7 @@ sub count {
 
 sub _file_by_id {
     my ( $self, $id ) = @_;
-    return $self->{dir} . "/$id.hst";
+    return $self->{dir} . '/' . md5_hex($id)  . '.hst';
 }
 
 1;

@@ -75,7 +75,8 @@ sub count {
 
 sub _is_good_id {
 	my ($self, $id) = @_;
-	return $id =~ m/^[a-zA-Z0-9][a-zA-Z0-9_\@\-.]*[a-zA-Z0-9]$/ ? 1 : 0 ;
+	return 1;
+	#return $id =~ m/^[a-zA-Z0-9][a-zA-Z0-9_\@\-.]*[a-zA-Z0-9]$/ ? 1 : 0 ;
 }
 
 =head1 NAME
