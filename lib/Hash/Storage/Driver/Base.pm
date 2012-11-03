@@ -5,13 +5,14 @@ use strict;
 use warnings;
 use Carp qw/croak/;
 use Data::Serializer::Raw;
+use Filter::Maker;
 
 our $VERSION = '0.01';
 
 sub new {
     my $class = shift;
     my %args  = @_;
- 
+
     my $serializer = $args{serializer};
     croak "Wrong serializer" unless $serializer;
 
@@ -61,6 +62,13 @@ sub count {
     my ( $self, $filter ) = @_;
     my $class = ref $self || $self;
     croak "Method [count] is not implemented in class [$class]";
+}
+
+sub do_filtering {
+    my ( $self, $hashes, $query ) = @_;
+    my $fm = Filter::Maker->new( driver => ['ArrayOfHashes'] );
+    my $filter_sub = $fm->make_filter(@$query);
+    return $filter_sub->($hashes);
 }
 
 1;    # End of Hash::Storage

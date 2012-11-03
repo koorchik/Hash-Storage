@@ -12,7 +12,7 @@ use Digest::MD5 qw/md5_hex/;
 
 sub new {
     my ($class, %args) = @_;
-    
+
     my $self = $class->SUPER::new(%args);
     croak "WRONG DIR [$self->{dir}]" unless -d $self->{dir};
     return $self;
@@ -53,24 +53,24 @@ sub del {
 }
 
 sub list {
-    my ( $self, $filter, $offset, $limit ) = @_;
+    my ( $self, @query ) = @_;
     my $dir = $self->{dir};
     my @hashes;
-    
+
     opendir( my $dh , $dir ) or die "Cannot open dir [$dir]";
     while ( my $file = readdir($dh) ){
         next if $file !~ /^[a-f0-9]+\.hst$/;
-        
+
         my $serialized = read_file("$dir/$file");
-        push @hashes, $self->{serializer}->deserialize($serialized); 
+        push @hashes, $self->{serializer}->deserialize($serialized);
     }
 
-    return \@hashes;
+    return $self->do_filtering(\@hashes, \@query);
 }
 
 sub count {
-    my ( $self, $filter ) = @_;
-    my $hashes = $self->list($filter);
+    my ( $self, @query ) = @_;
+    my $hashes = $self->list(@query);
     return scalar(@$hashes);
 }
 

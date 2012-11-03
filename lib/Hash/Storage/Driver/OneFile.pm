@@ -40,16 +40,16 @@ sub del {
 }
 
 sub list {
-    my ( $self, $filter, $offset, $limit ) = @_;
+    my ( $self, @query ) = @_;
     my $hashes = $self->_load_data();
     my @hashes = values %$hashes;
-    return \@hashes;
+    return $self->do_filtering(\@hashes, \@query);
 }
 
 sub count {
-    my ( $self, $filter ) = @_;
-    my $hashes = $self->_load_data();
-    return scalar( keys(%$hashes) );
+    my ( $self, @query ) = @_;
+    my $hashes = $self->list(@query);
+    return scalar(@$hashes);
 }
 
 sub _load_data {
