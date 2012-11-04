@@ -2,6 +2,7 @@ Changes
 lib/Hash/Storage.pm
 lib/Hash/Storage/Driver/Files.pm
 lib/Hash/Storage/Driver/OneFile.pm
+lib/Hash/Storage/Driver/Memory.pm
 lib/Hash/Storage/AutoTester.pm
 lib/Hash/Storage/Util.pm
 Makefile.PL
@@ -9,3 +10,4 @@ MANIFEST			This list of files
 README.pod
 t/01-driver-one_file-autotest.t
 t/02-driver-files-autotest.t
+t/02-driver-memory-autotest.t
