@@ -22,6 +22,7 @@ sub run {
     $self->test_get();
     $self->test_set();
     $self->test_del();
+    $self->test_list();
 }
 
 sub test_get {
@@ -42,12 +43,12 @@ sub test_get {
         gender => 'male'
     );
 
-    subtest 'Getting set users' => sub {
-        ok( $st->set('user1', {%user1}), 'should return true on successful "set"' );
-        ok( $st->set('user2', {%user2}), 'should return true on successful "set"' );
+    subtest 'Getting users' => sub {
+        ok( $st->set('user1', {%user1}), 'should create "user1" and return true' );
+        ok( $st->set('user2', {%user2}), 'should create "user2" and return true' );
 
-        cmp_deeply($st->get('user1'), {%user1}, 'should return all1 user attrs');
-        cmp_deeply($st->get('user2'), {%user2}, 'should return all1 user attrs');
+        cmp_deeply($st->get('user1'), {%user1}, 'should return "user1" attrs');
+        cmp_deeply($st->get('user2'), {%user2}, 'should return "user2" attrs');
     };
 }
 
@@ -56,7 +57,7 @@ sub test_set {
     my $self = shift;
     my $st = $self->{storage};
 
-    my %user = (
+    my %user1 = (
         fname  => 'Ivan',
         lname  => 'Ivanov',
         age    => '21',
@@ -65,11 +66,11 @@ sub test_set {
 
 
     subtest 'Set and Update user' => sub {
-        ok( $st->set('user', {%user}), 'should return true on successful "set"' );
-        cmp_deeply($st->get('user'), {%user}, 'should return all user attrs');
+        ok( $st->set('user1', {%user1}), 'should create "user1" and return true' );
+        cmp_deeply($st->get('user1'), {%user1}, 'should return "user1" attrs');
 
-        ok( $st->set('user', {lname => 'NewLname', age => 33}), 'should return true on successful "set"' );
-        my $updated_user = $st->get('user');
+        ok( $st->set('user1', {lname => 'NewLname', age => 33}), 'should update "user1" and return true' );
+        my $updated_user = $st->get('user1');
 
         is( $updated_user->{fname},  'Ivan',     'fname should be the same as before');
         is( $updated_user->{lname},  'NewLname', 'lname should contain new value - "NewLname"');
@@ -97,12 +98,66 @@ sub test_del {
     );
 
     subtest 'Deleting users' => sub {
-        ok( $st->set('user1', {%user1}), 'should return true on successful "set"' );
-        ok( $st->set('user2', {%user2}), 'should return true on successful "set"' );
+        ok( $st->set('user1', {%user1}), 'should create "user1" and return true' );
+        ok( $st->set('user2', {%user2}), 'should create "user2" and return true' );
 
-        cmp_deeply($st->get('user1'), {%user1}, 'should return all user attrs');
-        cmp_deeply($st->get('user2'), {%user2}, 'should return all user attrs');
+        ok( $st->del('user1'), 'should delete "user1" and return true' );
+
+        ok( !$st->get('user1'), 'should return undef because "user1" was deleted');
+        cmp_deeply($st->get('user2'), {%user2}, 'should return not deleted "user2"');
+
+        ok( $st->del('user2'), 'should delete "user2" and return true' );
+        ok( !$st->get('user1'), 'should return undef because "user2" was deleted');
     };
+}
+
+
+sub test_list {
+    my $self = shift;
+    my $st = $self->{storage};
+
+    my %user1 = (
+        fname  => 'Ivan',
+        lname  => 'Ivanov',
+        age    => '21',
+        gender => 'male'
+    );
+
+    my %user2 = (
+        fname  => 'Taras',
+        lname  => 'Schevchenko',
+        age    => '64',
+        gender => 'male'
+    );
+
+    my %user3 = (
+        fname  => 'Taras',
+        lname  => 'Schevchenko',
+        age    => '64',
+        gender => 'male'
+    );
+
+    my %user4 = (
+        fname  => 'Taras',
+        lname  => 'Schevchenko',
+        age    => '64',
+        gender => 'male'
+    );
+
+    my %user5 = (
+        fname  => 'Taras',
+        lname  => 'Schevchenko',
+        age    => '64',
+        gender => 'male'
+    );
+
+    $st->set('user1', {%user1});
+    $st->set('user2', {%user2});
+    $st->set('user3', {%user3});
+    $st->set('user4', {%user4});
+    $st->set('user5', {%user5});
+
+    cmp_bag($st->list(), [\%user1, \%user2, \%user3, \%user4, \%user5], 'should return all users');
 }
 
 1;

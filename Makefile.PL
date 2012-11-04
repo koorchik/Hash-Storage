@@ -14,6 +14,7 @@ WriteMakefile(
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More'    => 0,
+        'Test::Deep'    => 0,
         'JSON'          => 0,
         'File::Slurp'   => 0,
         'Filter::Maker' => 0,
