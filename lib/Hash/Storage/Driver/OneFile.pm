@@ -4,7 +4,6 @@ use v5.10;
 use strict;
 use warnings;
 use File::Slurp;
-use Hash::Storage::Util qw/do_exclusively/;
 use List::Util qw/max/;
 use base "Hash::Storage::Driver::Base";
 
@@ -22,7 +21,7 @@ sub get {
 sub set {
     my ( $self, $id, $fields ) = @_;
 
-    do_exclusively( sub {
+    $self->do_exclusively( sub {
         my $hashes = $self->_load_data();
         @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
         $self->_save_data($hashes);
@@ -32,7 +31,7 @@ sub set {
 sub del {
     my ( $self, $id ) = @_;
 
-    do_exclusively( sub {
+    $self->do_exclusively( sub {
         my $hashes = $self->_load_data();
         delete $hashes->{$id};
         $self->_save_data($hashes);

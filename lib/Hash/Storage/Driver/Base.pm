@@ -3,7 +3,11 @@ package Hash::Storage::Driver::Base;
 use v5.10;
 use strict;
 use warnings;
+
 use Carp qw/croak/;
+use File::Spec;
+use Fcntl qw/:flock/;
+
 use Data::Serializer::Raw;
 use Query::Abstract;
 
@@ -71,6 +75,18 @@ sub do_filtering {
     my $qa = Query::Abstract->new( driver => ['ArrayOfHashes'] );
     my $filter_sub = $qa->convert_query(@$query);
     return $filter_sub->($hashes);
+}
+
+sub do_exclusively {
+    my ($self, $cb) = @_;
+    croak "Subroutine reference required" unless ref($cb) eq 'CODE';
+
+    state $semophore = File::Spec->tmpdir() . '/hash_storage.semaphore';
+    open( my $fh, '>', $semophore ) or die "Cannot open semaphore [$semophore] $!";
+
+    flock( $fh, LOCK_EX ) or die "Cannot lock  semaphore [$semophore] $!";
+    $cb->();
+    flock( $fh, LOCK_UN ) or die "Cannot unlock semaphore [$semophore] $!";
 }
 
 1;    # End of Hash::Storage
