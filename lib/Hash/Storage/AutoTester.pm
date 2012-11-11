@@ -23,6 +23,7 @@ sub run {
     $self->test_set();
     $self->test_del();
     $self->test_list();
+    $self->test_count();
 }
 
 sub test_get {
@@ -157,22 +158,86 @@ sub test_list {
     $st->set('user4', {%user4});
     $st->set('user5', {%user5});
 
-    cmp_bag($st->list(), [\%user1, \%user2, \%user3, \%user4, \%user5], 'should return all users');
-    cmp_bag($st->list([fname => 'Ivan']), [\%user1], 'should return user with fname="Ivan" users');
-    cmp_bag($st->list([fname => ['Ivan']]), [\%user1], 'should return user with fname="Ivan" users');
-    cmp_bag($st->list( where => [
-        fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
-        age => {'>=' => 30 },
-        gender => { 'like' => 'ma%' },
-    ]), [\%user2, \%user1], 'Should return "Ivan" and "Taras" ');
-
-    cmp_deeply($st->list( 
-        where => [
+    subtest 'List users' => sub {
+        cmp_bag($st->list(), [\%user1, \%user2, \%user3, \%user4, \%user5], 'should return all users');
+        cmp_bag($st->list([fname => 'Ivan']), [\%user1], 'simple query should return user with fname="Ivan" users');
+        cmp_bag($st->list([fname => ['Ivan']]), [\%user1], 'should return user with fname="Ivan" users');
+        cmp_bag($st->list( where => [
             fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
             age => {'>=' => 30 },
-        ], 
-        sort_by => 'age DESC, fname ASC',
-    ), [\%user2, \%user1, \%user5], 'Should return "Ivan" "Taras" ');
+            gender => { 'like' => 'ma%' },
+        ]), [\%user2, \%user1], 'complex query should return "Ivan" and "Taras" ');
+
+        cmp_deeply($st->list( 
+            where => [
+                fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+                age => {'>=' => 30 },
+            ], 
+            sort_by => 'age DESC, fname ASC',
+        ), [\%user2, \%user1, \%user5], 'complex query with sort should return "Ivan" "Taras" ');
+    };
+}
+
+sub test_count {
+    my $self = shift;
+    my $st = $self->{storage};
+
+    my %user1 = (
+        fname  => 'Ivan',
+        lname  => 'Ivanov',
+        age    => '30',
+        gender => 'male'
+    );
+
+    my %user2 = (
+        fname  => 'Taras',
+        lname  => 'Leleka',
+        age    => '64',
+        gender => 'male'
+    );
+
+    my %user3 = (
+        fname  => 'Taras',
+        lname  => 'Schevchenko',
+        age    => '22',
+        gender => 'male'
+    );
+
+    my %user4 = (
+        fname  => 'Petrik',
+        lname  => 'Pyatochkin',
+        age    => '8',
+        gender => 'male'
+    );
+
+    my %user5 = (
+        fname  => 'Lesya',
+        lname  => 'Ukrainka',
+        age    => '30',
+        gender => 'female'
+    );
+
+    $st->set('user1', {%user1});
+    $st->set('user2', {%user2});
+    $st->set('user3', {%user3});
+    $st->set('user4', {%user4});
+    $st->set('user5', {%user5});
+
+    subtest 'Count users' => sub {
+        is($st->count(), 5, 'should return 5 ');
+        is($st->count([fname => 'Ivan']), 1, 'should return 1');
+        is($st->count([fname => ['Ivan']]), 1, 'should return 1');
+        is($st->count( [
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            age => {'>=' => 30 },
+            gender => { 'like' => 'ma%' },
+        ]), 2, 'complex query: should return 2');
+
+        is($st->count( [
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            age => {'>=' => 30 },
+        ]), 3, 'complex query: should return 3 ');
+    };
 }
 
 1;

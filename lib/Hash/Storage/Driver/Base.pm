@@ -55,7 +55,7 @@ sub del {
 }
 
 sub list {
-    my ( $self, $filter, $offset, $limit ) = @_;
+    my ( $self, @query ) = @_;
     my $class = ref $self || $self;
     croak "Method [list] is not implemented in class [$class]";
 }
@@ -68,8 +68,8 @@ sub count {
 
 sub do_filtering {
     my ( $self, $hashes, $query ) = @_;
-    my $fm = Query::Abstract->new( driver => ['ArrayOfHashes'] );
-    my $filter_sub = $fm->convert_query(@$query);
+    my $qa = Query::Abstract->new( driver => ['ArrayOfHashes'] );
+    my $filter_sub = $qa->convert_query(@$query);
     return $filter_sub->($hashes);
 }
 

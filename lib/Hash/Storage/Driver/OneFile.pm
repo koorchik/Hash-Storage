@@ -47,8 +47,8 @@ sub list {
 }
 
 sub count {
-    my ( $self, @query ) = @_;
-    my $hashes = $self->list(@query);
+    my ( $self, $filter ) = @_;
+    my $hashes = $self->list(where => $filter);
     return scalar(@$hashes);
 }
 
