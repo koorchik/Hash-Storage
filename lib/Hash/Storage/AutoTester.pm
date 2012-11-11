@@ -119,13 +119,13 @@ sub test_list {
     my %user1 = (
         fname  => 'Ivan',
         lname  => 'Ivanov',
-        age    => '21',
+        age    => '30',
         gender => 'male'
     );
 
     my %user2 = (
         fname  => 'Taras',
-        lname  => 'Schevchenko',
+        lname  => 'Leleka',
         age    => '64',
         gender => 'male'
     );
@@ -133,22 +133,22 @@ sub test_list {
     my %user3 = (
         fname  => 'Taras',
         lname  => 'Schevchenko',
-        age    => '64',
+        age    => '22',
         gender => 'male'
     );
 
     my %user4 = (
-        fname  => 'Taras',
-        lname  => 'Schevchenko',
-        age    => '64',
+        fname  => 'Petrik',
+        lname  => 'Pyatochkin',
+        age    => '8',
         gender => 'male'
     );
 
     my %user5 = (
-        fname  => 'Taras',
-        lname  => 'Schevchenko',
-        age    => '64',
-        gender => 'male'
+        fname  => 'Lesya',
+        lname  => 'Ukrainka',
+        age    => '30',
+        gender => 'female'
     );
 
     $st->set('user1', {%user1});
@@ -158,6 +158,21 @@ sub test_list {
     $st->set('user5', {%user5});
 
     cmp_bag($st->list(), [\%user1, \%user2, \%user3, \%user4, \%user5], 'should return all users');
+    cmp_bag($st->list([fname => 'Ivan']), [\%user1], 'should return user with fname="Ivan" users');
+    cmp_bag($st->list([fname => ['Ivan']]), [\%user1], 'should return user with fname="Ivan" users');
+    cmp_bag($st->list( where => [
+        fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+        age => {'>=' => 30 },
+        gender => { 'like' => 'ma%' },
+    ]), [\%user2, \%user1], 'Should return "Ivan" and "Taras" ');
+
+    cmp_deeply($st->list( 
+        where => [
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            age => {'>=' => 30 },
+        ], 
+        sort_by => 'age DESC, fname ASC',
+    ), [\%user2, \%user1, \%user5], 'Should return "Ivan" "Taras" ');
 }
 
 1;

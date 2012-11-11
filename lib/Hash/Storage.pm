@@ -4,6 +4,7 @@ use v5.10;
 use strict;
 use warnings;
 use Carp qw/croak/;
+use Class::Load qw/load_class/;
 
 our $VERSION = '0.02';
 
@@ -18,8 +19,7 @@ sub new {
     if ( ref $driver eq 'ARRAY' ) {
         my $driver_class = 'Hash::Storage::Driver::' . $driver->[0];
 
-        eval "require $driver_class";
-        croak "Cannot load [$driver_class] $@" if $@;
+        load_class($driver_class);
 
         $self->{driver} = $driver_class->new( %{ $driver->[1] || {} } );
     } elsif ( $driver->isa('Hash::Storage::Driver::Base') ) {
@@ -64,8 +64,8 @@ sub del {
 }
 
 sub list {
-    my ( $self, $filter, $order, $offset, $limit ) = @_;
-    $self->{driver}->list( $filter, $order, $offset, $limit );
+    my ( $self, @query ) = @_;
+    $self->{driver}->list( @query );
 }
 
 sub count {

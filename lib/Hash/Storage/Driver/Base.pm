@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Carp qw/croak/;
 use Data::Serializer::Raw;
-use Filter::Maker;
+use Query::Abstract;
 
 our $VERSION = '0.01';
 
@@ -18,8 +18,10 @@ sub new {
 
     my $self = bless \%args, $class;
 
-    if (! ref $serializer  ) {
-        $self->{serializer} = Data::Serializer::Raw->new(serializer => $serializer);
+    if (! ref $serializer ) {
+        if ($serializer ne 'Dummy') {
+            $self->{serializer} = Data::Serializer::Raw->new(serializer => $serializer);
+        }
     } elsif ( $serializer->can('serialize') && $serializer->can('deserialize') ) {
         $self->{serializer} = $serializer;
     } else {
@@ -66,8 +68,8 @@ sub count {
 
 sub do_filtering {
     my ( $self, $hashes, $query ) = @_;
-    my $fm = Filter::Maker->new( driver => ['ArrayOfHashes'] );
-    my $filter_sub = $fm->make_filter(@$query);
+    my $fm = Query::Abstract->new( driver => ['ArrayOfHashes'] );
+    my $filter_sub = $fm->convert_query(@$query);
     return $filter_sub->($hashes);
 }
 
