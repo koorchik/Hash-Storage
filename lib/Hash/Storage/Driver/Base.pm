@@ -11,8 +11,6 @@ use Fcntl qw/:flock/;
 use Data::Serializer::Raw;
 use Query::Abstract;
 
-our $VERSION = '0.01';
-
 sub new {
     my $class = shift;
     my %args  = @_;

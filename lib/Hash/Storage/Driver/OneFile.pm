@@ -3,8 +3,9 @@ package Hash::Storage::Driver::OneFile;
 use v5.10;
 use strict;
 use warnings;
+
 use File::Slurp;
-use List::Util qw/max/;
+
 use base "Hash::Storage::Driver::Base";
 
 sub init {
@@ -25,7 +26,7 @@ sub set {
         my $hashes = $self->_load_data();
         @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
         $hashes->{$id}->{_id} = $id;
-        
+
         $self->_save_data($hashes);
     } );
 }

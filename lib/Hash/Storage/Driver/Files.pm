@@ -3,12 +3,12 @@ package Hash::Storage::Driver::Files;
 use v5.10;
 use strict;
 use warnings;
+
 use File::Slurp;
-use Hash::Storage::Util qw/do_exclusively/;
-use List::Util qw/max/;
-use base "Hash::Storage::Driver::Base";
 use Carp qw/croak/;
 use Digest::MD5 qw/md5_hex/;
+
+use base "Hash::Storage::Driver::Base";
 
 sub new {
     my ($class, %args) = @_;
@@ -36,10 +36,10 @@ sub get {
 sub set {
     my ( $self, $id, $fields ) = @_;
 
-    do_exclusively( sub {
+    $self->do_exclusively( sub {
         my $data = $self->get($id) || {};
         $data->{_id} = $id;
-        
+
         @{$data}{ keys %$fields } = values %$fields;
 
         my $serialized = $self->{serializer}->serialize($data);
@@ -49,7 +49,7 @@ sub set {
 
 sub del {
     my ( $self, $id ) = @_;
-    do_exclusively( sub {
+    $self->do_exclusively( sub {
         unlink( $self->_file_by_id($id) );
     });
 }

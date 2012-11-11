@@ -3,9 +3,10 @@ package Hash::Storage::Driver::Memory;
 use v5.10;
 use strict;
 use warnings;
+
 use File::Slurp;
-use Hash::Storage::Util qw/do_exclusively/;
-use List::Util qw/max/;
+use Storable qw/dclone/;
+
 use base "Hash::Storage::Driver::Base";
 
 sub init {
@@ -16,8 +17,10 @@ sub init {
 sub get {
     my ( $self, $id ) = @_;
     my $hashes = $self->{data};
+    my $hash = $hashes->{$id};
 
-    return $hashes->{$id};
+    return unless $hash;
+    return dclone($hash);
 }
 
 sub set {
@@ -40,7 +43,8 @@ sub list {
     my $hashes = $self->{data};
 
     my @hashes = values %$hashes;
-    return $self->do_filtering(\@hashes, \@query);
+    my $filtered = $self->do_filtering(\@hashes, \@query);
+    return dclone $filtered;
 }
 
 sub count {
