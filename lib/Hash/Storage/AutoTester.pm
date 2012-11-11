@@ -48,8 +48,8 @@ sub test_get {
         ok( $st->set('user1', {%user1}), 'should create "user1" and return true' );
         ok( $st->set('user2', {%user2}), 'should create "user2" and return true' );
 
-        cmp_deeply($st->get('user1'), {%user1}, 'should return "user1" attrs');
-        cmp_deeply($st->get('user2'), {%user2}, 'should return "user2" attrs');
+        cmp_deeply($st->get('user1'), {%user1, _id => 'user1'}, 'should return "user1" attrs');
+        cmp_deeply($st->get('user2'), {%user2, _id => 'user2'}, 'should return "user2" attrs');
     };
 }
 
@@ -68,11 +68,12 @@ sub test_set {
 
     subtest 'Set and Update user' => sub {
         ok( $st->set('user1', {%user1}), 'should create "user1" and return true' );
-        cmp_deeply($st->get('user1'), {%user1}, 'should return "user1" attrs');
+        cmp_deeply($st->get('user1'), {%user1, _id => 'user1'}, 'should return "user1" attrs');
 
         ok( $st->set('user1', {lname => 'NewLname', age => 33}), 'should update "user1" and return true' );
         my $updated_user = $st->get('user1');
 
+        is( $updated_user->{_id},  'user1',     '_id should should contain object id');
         is( $updated_user->{fname},  'Ivan',     'fname should be the same as before');
         is( $updated_user->{lname},  'NewLname', 'lname should contain new value - "NewLname"');
         is( $updated_user->{age},    '33',       'age should contain new value - "33"');
@@ -105,7 +106,7 @@ sub test_del {
         ok( $st->del('user1'), 'should delete "user1" and return true' );
 
         ok( !$st->get('user1'), 'should return undef because "user1" was deleted');
-        cmp_deeply($st->get('user2'), {%user2}, 'should return not deleted "user2"');
+        cmp_deeply($st->get('user2'), {%user2,  _id => 'user2'}, 'should return not deleted "user2"');
 
         ok( $st->del('user2'), 'should delete "user2" and return true' );
         ok( !$st->get('user1'), 'should return undef because "user2" was deleted');
@@ -153,10 +154,19 @@ sub test_list {
     );
 
     $st->set('user1', {%user1});
+    $user1{_id} = 'user1';
+
     $st->set('user2', {%user2});
+    $user2{_id} = 'user2';
+
     $st->set('user3', {%user3});
+    $user3{_id} = 'user3';
+
     $st->set('user4', {%user4});
+    $user4{_id} = 'user4';
+
     $st->set('user5', {%user5});
+    $user5{_id} = 'user5';
 
     subtest 'List users' => sub {
         cmp_bag($st->list(), [\%user1, \%user2, \%user3, \%user4, \%user5], 'should return all users');

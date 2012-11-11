@@ -38,6 +38,8 @@ sub set {
 
     do_exclusively( sub {
         my $data = $self->get($id) || {};
+        $data->{_id} = $id;
+        
         @{$data}{ keys %$fields } = values %$fields;
 
         my $serialized = $self->{serializer}->serialize($data);

@@ -48,9 +48,10 @@ sub get {
 
 sub set {
     my ( $self, $id, $fields ) = @_;
-    croak "id is required" unless $id;
-    croak "id must contain only letters and digits" unless $self->_is_good_id($id);
-    croak "fields are required" unless ref $fields eq 'HASH';
+    croak 'id is required' unless $id;
+    croak 'id must contain only letters and digits' unless $self->_is_good_id($id);
+    croak 'fields are required' unless ref $fields eq 'HASH';
+    croak 'You cannot set "_id" manually' if exists $fields->{_id};
     
     $self->{driver}->set( lc($id), $fields );
 }

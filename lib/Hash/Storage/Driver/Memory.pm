@@ -25,6 +25,7 @@ sub set {
     my $hashes = $self->{data};
     
     @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
+    $hashes->{$id}->{_id} = $id;
 }
 
 sub del {
