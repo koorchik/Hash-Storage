@@ -25,8 +25,6 @@ sub set {
     $self->do_exclusively( sub {
         my $hashes = $self->_load_data();
         @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
-        $hashes->{$id}->{_id} = $id;
-
         $self->_save_data($hashes);
     } );
 }
