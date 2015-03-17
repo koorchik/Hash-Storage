@@ -10,7 +10,7 @@ use File::Slurp;
 use Carp qw/croak/;
 use Digest::MD5 qw/md5_hex/;
 
-use base "Hash::Storage::Driver::Base";
+use base 'Hash::Storage::Driver::Base';
 
 sub new {
     my ($class, %args) = @_;
@@ -22,7 +22,6 @@ sub new {
 
 sub init {
     my ($self) = @_;
-
 }
 
 sub get {

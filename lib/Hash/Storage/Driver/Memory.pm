@@ -9,7 +9,7 @@ use warnings;
 use File::Slurp;
 use Storable qw/dclone/;
 
-use base "Hash::Storage::Driver::Base";
+use base 'Hash::Storage::Driver::Base';
 
 sub init {
     my ($self) = @_;

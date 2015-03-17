@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use Test::More;
+use Hash::Storage;
 use Hash::Storage::AutoTester;
 use File::Temp qw/tmpnam/;
 

@@ -71,8 +71,8 @@ $copier->copy_all();
 
 is($dst_storage->count(), 5, 'DST storage should contain all 5 users');
 cmp_bag(
-    $dst_storage->list(), 
-    [\%user1, \%user2, \%user3, \%user4, \%user5,], 
+    $dst_storage->list(),
+    [\%user1, \%user2, \%user3, \%user4, \%user5,],
     'DST storage should contain all 5 users'
 );
 
