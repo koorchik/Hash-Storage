@@ -1,12 +1,12 @@
 package Hash::Storage;
 
+our $VERSION = '0.02';
+
 use v5.10;
 use strict;
 use warnings;
 use Carp qw/croak/;
 use Class::Load qw/load_class/;
-
-our $VERSION = '0.02';
 
 sub new {
     my $class  = shift;
@@ -42,7 +42,7 @@ sub get {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
     croak "id must contain only letters and digits" unless $self->_is_good_id($id);
-    
+
     $self->{driver}->get(lc($id));
 }
 
@@ -60,7 +60,7 @@ sub del {
     my ( $self, $id ) = @_;
     croak "id is required" unless $id;
     croak "id must contain only letters and digits" unless $self->_is_good_id($id);
-    
+
     $self->{driver}->del(lc($id));
 }
 
@@ -88,24 +88,24 @@ Hash::Storage - Persistent Hash Storage Framework
 
 =head1 SYNOPSIS
 
-    my $st = Hash::Storage->new( 
-        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ] 
+    my $st = Hash::Storage->new(
+        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ]
     );
-    
+
     # Store hash by id
     $st->set( 'user1' => { name => 'Viktor', gender => 'M', age => '28' } );
-    
+
     # Get hash by id
     my $user_data = $st->get('user1');
-    
+
     # Delete hash by id
     $st->del('user1');
-    
+
 
 =head1 DESCRIPTION
 
-Hash::Storage is a multipurpose storage for hash. You can consider Hash::Storage object as a collection of hashes. 
-You can use it for storing users, sessions and a lot more data.  
+Hash::Storage is a multipurpose storage for hash. You can consider Hash::Storage object as a collection of hashes.
+You can use it for storing users, sessions and a lot more data.
 
 Hash::Storage has pluggable architecture, therefore you can use different drivers or write you own.
 
@@ -115,13 +115,13 @@ Hash::Storage has pluggable architecture, therefore you can use different driver
 
 $DRIVER is an arrayref with two values:
 the first is a driver name, the second is a hashref with options for driver.
-    
-    my $st = Hash::Storage->new( 
-        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ] 
+
+    my $st = Hash::Storage->new(
+        driver => [ OneFile => { serializer => 'JSON', file => '/tmp/t.json' } ]
     );
 
 $DRIVER - also can be a Hash::Storage driver object
-    
+
     my $drv = Hash::Storage::Driver::OneFile->new({ serializer => 'JSON', file => '/tmp/t.json' });
     my $st = Hash::Storage->new( driver => $drv );
 
@@ -145,7 +145,7 @@ returns array with hashrefs
 =head2 $SELF->count();
 
 returns number of hashes in a collection
- 
+
 =head1 AUTHOR
 
 "koorchik", C<< <"koorchik at cpan.org"> >>

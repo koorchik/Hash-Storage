@@ -1,5 +1,7 @@
 package Hash::Storage::AutoTester;
 
+our $VERSION = '0.02';
+
 use strict;
 use warnings;
 use v5.10;
@@ -173,16 +175,16 @@ sub test_list {
         cmp_bag($st->list([fname => 'Ivan']), [\%user1], 'simple query should return user with fname="Ivan" users');
         cmp_bag($st->list([fname => ['Ivan']]), [\%user1], 'should return user with fname="Ivan" users');
         cmp_bag($st->list( where => [
-            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'],
             age => {'>=' => 30 },
             gender => { 'like' => 'ma%' },
         ]), [\%user2, \%user1], 'complex query should return "Ivan" and "Taras" ');
 
-        cmp_deeply($st->list( 
+        cmp_deeply($st->list(
             where => [
-                fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+                fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'],
                 age => {'>=' => 30 },
-            ], 
+            ],
             sort_by => 'age DESC, fname ASC',
         ), [\%user2, \%user1, \%user5], 'complex query with sort should return "Ivan" "Taras" ');
     };
@@ -238,13 +240,13 @@ sub test_count {
         is($st->count([fname => 'Ivan']), 1, 'should return 1');
         is($st->count([fname => ['Ivan']]), 1, 'should return 1');
         is($st->count( [
-            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'],
             age => {'>=' => 30 },
             gender => { 'like' => 'ma%' },
         ]), 2, 'complex query: should return 2');
 
         is($st->count( [
-            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'], 
+            fname => ['Ivan', 'Taras', 'Petrik', 'Lesya'],
             age => {'>=' => 30 },
         ]), 3, 'complex query: should return 3 ');
     };

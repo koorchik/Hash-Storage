@@ -1,5 +1,7 @@
 package Hash::Storage::Driver::Memory;
 
+our $VERSION = '0.02';
+
 use v5.10;
 use strict;
 use warnings;
@@ -26,7 +28,7 @@ sub get {
 sub set {
     my ( $self, $id, $fields ) = @_;
     my $hashes = $self->{data};
-    
+
     @{ $hashes->{$id} }{ keys %$fields } = values %$fields;
 }
 

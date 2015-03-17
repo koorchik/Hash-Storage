@@ -1,5 +1,7 @@
 package Hash::Storage::Driver::OneFile;
 
+our $VERSION = '0.02';
+
 use v5.10;
 use strict;
 use warnings;

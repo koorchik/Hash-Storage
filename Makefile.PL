@@ -19,7 +19,7 @@ WriteMakefile(
         'File::Slurp'      => 0,
         'Query::Abstract'  => 0,
         'Class::Load'      => 0,
-	'Data::Serializer' => 0.60
+	    'Data::Serializer' => 0.60
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Hash-Storage-*' },

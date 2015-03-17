@@ -10,4 +10,4 @@ MANIFEST			This list of files
 README.pod
 t/01-driver-one_file-autotest.t
 t/02-driver-files-autotest.t
-t/02-driver-memory-autotest.t
+t/03-driver-memory-autotest.t
