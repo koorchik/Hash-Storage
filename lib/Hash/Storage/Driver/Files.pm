@@ -1,6 +1,6 @@
 package Hash::Storage::Driver::Files;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use v5.10;
 use strict;

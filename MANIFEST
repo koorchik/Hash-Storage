@@ -3,6 +3,7 @@ lib/Hash/Storage.pm
 lib/Hash/Storage/Driver/Files.pm
 lib/Hash/Storage/Driver/OneFile.pm
 lib/Hash/Storage/Driver/Memory.pm
+lib/Hash/Storage/Driver/Base.pm
 lib/Hash/Storage/AutoTester.pm
 lib/Hash/Storage/Copier.pm
 Makefile.PL
